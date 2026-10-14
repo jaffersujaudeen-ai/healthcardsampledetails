@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LifeX Healthcare · One ID. Complete Healthcare.</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body data-role="doctor">
+
+<!-- ===== ROLE SELECT (entry view) ===== -->
+<section id="view-roles" class="view">
+  <div class="topbar">
+    <div class="brand"><span class="mark">L</span>LifeX Healthcare</div>
+  </div>
+  <div class="select-wrap">
+    <h2>Continue as</h2>
+    <p class="sub">Choose how you're connecting to the patient's record today.</p>
+    <div class="role-grid">
+      <div class="role-card">
+        <div class="icn"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v6a4 4 0 0 0 8 0V3"/><path d="M18 8v3a7 7 0 0 1-14 0V8"/><circle cx="19" cy="6" r="2"/></svg></div>
+        <h3>Doctor</h3>
+        <p>View authorized patient history, prescriptions and laboratory reports.</p>
+        <button class="btn btn-primary btn-sm" onclick="enterDashboard('doctor')">Continue as Doctor</button>
+      </div>
+      <div class="role-card">
+        <div class="icn"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 2v6L4 18a2 2 0 0 0 2 3h12a2 2 0 0 0 2-3L15 8V2"/><path d="M9 2h6"/><path d="M7 15h10"/></svg></div>
+        <h3>Laboratory</h3>
+        <p>Find patients and access authorized laboratory records.</p>
+        <button class="btn btn-primary btn-sm" onclick="enterDashboard('lab')">Continue as Lab</button>
+      </div>
+      <div class="role-card">
+        <div class="icn"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/></svg></div>
+        <h3>Pharmacy</h3>
+        <p>Access authorized e-prescriptions for medicine dispensing.</p>
+        <button class="btn btn-primary btn-sm" onclick="enterDashboard('pharmacy')">Continue as Pharmacy</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== DASHBOARD (shared across roles) ===== -->
+<section id="view-dash" class="view hidden">
+  <div class="dash-header">
+    <div class="who">
+      <span class="brand" style="font-size:1.05rem"><span class="mark" style="width:28px;height:28px;font-size:.85rem">L</span></span>
+      <div>
+        <h2 id="dashTitle">Doctor Dashboard</h2>
+        <div class="acct" id="dashAcct">Demo Doctor Account</div>
+      </div>
+      <span class="role-badge" id="roleBadge">DOCTOR</span>
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="logout()">Logout</button>
+  </div>
+
+  <div class="dash-body">
+    <div class="search-row">
+      <input id="searchInput" type="text" value="XPA13S42JE2" placeholder="Enter LifeX Patient ID">
+      <button class="btn btn-primary" onclick="searchPatient()">Search Patient</button>
+    </div>
+    <div id="searchErr" class="search-err hidden">No patient found for this LifeX ID.</div>
+
+    <div id="patientResult" class="hidden">
+      <div class="patient-card">
+        <div class="patient-strip">
+          <div></div>
+          <div class="idchip"><div class="lbl">LifeX ID</div><div class="val">XPA13S42JE2</div></div>
+        </div>
+        <div class="patient-main">
+          <img class="photo" src="patient-photo.jpg" alt="Patient photo">
+          <div class="pinfo"><h3>Jaffer Sujaudeen M</h3></div>
+        </div>
+        <div class="info-grid">
+          <div class="f"><span class="lbl">Blood group</span><span class="val">B+</span></div>
+          <div class="f"><span class="lbl">Mobile</span><span class="val">94878 38963</span></div>
+          <div class="f"><span class="lbl">Emergency contact</span><span class="val">94430 12984</span></div>
+          <div class="f"><span class="lbl">Address</span><span class="val">13/18 Mosaka Street, TT Kulam, Cumbum, Theni District, Tamil Nadu, 625516</span></div>
+        </div>
+      </div>
+
+      <div class="rx-block">
+        <div class="section-head"><h3>Prescriptions</h3></div>
+        <div class="record-grid">
+          <div class="record-card">
+            <div class="top"><span class="type">E-Prescription</span><span class="status">Demo · Unsigned</span></div>
+            <h4>Prescription 001</h4>
+            <div class="meta">Dr. Meena R. · 14 Oct 2026</div>
+            <button class="btn btn-ghost btn-sm" onclick="openDoc('rx')">View Prescription</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="lab-block">
+        <div class="section-head"><h3>Laboratory Reports</h3></div>
+        <div class="record-grid">
+          <div class="record-card">
+            <div class="top"><span class="type">Laboratory Report</span><span class="status">Demo · Simulated</span></div>
+            <h4>Lab Report 001</h4>
+            <div class="meta">LifeX Demo Laboratory · 14 Oct 2026</div>
+            <button class="btn btn-ghost btn-sm" onclick="openDoc('lab')">View Lab Report</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="emptyState" class="empty-state">
+      <p>Search a LifeX ID above to view the patient's authorized record.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PRESCRIPTION MODAL ===== -->
+<div id="modalRx" class="overlay hidden">
+  <div class="modal">
+    <div class="modal-head"><h3>Prescription 001 · E-Prescription</h3><button onclick="closeDoc('rx')">&times;</button></div>
+    <div class="demo-banner">Demo sample · Not valid for clinical use · Unsigned</div>
+    <div class="modal-body" id="bodyRx" style="--zoom:1">
+      <h4>Patient</h4>
+      <div class="doc-grid">
+        <div><span class="lbl">Name</span><br>Jaffer Sujaudeen M</div>
+        <div><span class="lbl">LifeX ID</span><br>XPA13S42JE2</div>
+      </div>
+      <h4>Doctor / consultation</h4>
+      <div class="doc-grid">
+        <div><span class="lbl">Doctor</span><br>Dr. Meena R. (fictional demo doctor)</div>
+        <div><span class="lbl">Speciality</span><br>General Medicine</div>
+        <div><span class="lbl">Clinic</span><br>LifeX Demo Clinic</div>
+        <div><span class="lbl">Chief complaint</span><br>Fever and body ache (demo scenario)</div>
+      </div>
+      <h4>Vitals</h4>
+      <div class="doc-grid">
+        <div><span class="lbl">Temperature</span><br>38.6 °C</div>
+        <div><span class="lbl">Pulse</span><br>96 bpm</div>
+        <div><span class="lbl">Blood pressure</span><br>112/74 mmHg</div>
+        <div><span class="lbl">SpO₂</span><br>98% on room air</div>
+      </div>
+      <h4>Medication plan — clinician review required</h4>
+      <p style="font-size:.9rem">Paracetamol 500 mg tablet — 1 tablet by mouth after food if needed for fever, ≥6 hours between doses. Duration as directed by the treating doctor. Avoid combining with other paracetamol-containing products.</p>
+      <h4>Doctor notes</h4>
+      <ul class="note-list">
+        <li>Rest and maintain oral fluids unless fluid restriction is advised.</li>
+        <li>Do not self-start antibiotics.</li>
+        <li>Seek urgent care for breathing difficulty, confusion or persistent vomiting.</li>
+      </ul>
+    </div>
+    <div class="modal-foot">
+      <div class="zoomctl"><button onclick="zoom('rx',-1)">−</button><span id="zoomRx">100%</span><button onclick="zoom('rx',1)">+</button></div>
+      <div style="display:flex;gap:10px"><button class="btn btn-ghost btn-sm" onclick="window.print()">Print</button><button class="btn btn-primary btn-sm" onclick="closeDoc('rx')">Close</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LAB REPORT MODAL ===== -->
+<div id="modalLab" class="overlay hidden">
+  <div class="modal">
+    <div class="modal-head"><h3>Lab Report 001 · Laboratory Report</h3><button onclick="closeDoc('lab')">&times;</button></div>
+    <div class="demo-banner">Demo sample · Simulated results, not a real report</div>
+    <div class="modal-body" id="bodyLab" style="--zoom:1">
+      <h4>Patient</h4>
+      <div class="doc-grid">
+        <div><span class="lbl">Name</span><br>Jaffer Sujaudeen M</div>
+        <div><span class="lbl">LifeX ID</span><br>XPA13S42JE2</div>
+      </div>
+      <h4>Laboratory / sample</h4>
+      <div class="doc-grid">
+        <div><span class="lbl">Laboratory</span><br>LifeX Demo Laboratory</div>
+        <div><span class="lbl">Ordering clinician</span><br>Dr. Meena R.</div>
+        <div><span class="lbl">Specimen</span><br>EDTA whole blood (CBC)</div>
+        <div><span class="lbl">Report date</span><br>14 Oct 2026</div>
+      </div>
+      <h4>Illustrative CBC values</h4>
+      <table class="doc-table">
+        <tr><th>Test</th><th>Value</th><th>Reference</th><th>Unit</th></tr>
+        <tr><td>Haemoglobin</td><td>14.2</td><td>13.0–17.0</td><td>g/dL</td></tr>
+        <tr><td>Total WBC count</td><td>6,800</td><td>4,000–11,000</td><td>cells/µL</td></tr>
+        <tr><td>Neutrophils</td><td>62</td><td>40–80</td><td>%</td></tr>
+        <tr><td>Lymphocytes</td><td>29</td><td>20–40</td><td>%</td></tr>
+        <tr><td>Platelets</td><td>220,000</td><td>150,000–450,000</td><td>cells/µL</td></tr>
+        <tr><td>Haematocrit (PCV)</td><td>42</td><td>40–50</td><td>%</td></tr>
+      </table>
+      <h4>Fever-related tests</h4>
+      <ul class="note-list">
+        <li>Dengue NS1 antigen — not performed</li>
+        <li>Malaria rapid test / smear — not performed</li>
+        <li>CRP / other tests — not ordered</li>
+      </ul>
+      <h4>Laboratory comments</h4>
+      <p style="font-size:.9rem">Mock report for software demonstration; no specimen was collected or tested. A CBC alone cannot confirm "viral fever" — findings should be read alongside symptoms and examination.</p>
+    </div>
+    <div class="modal-foot">
+      <div class="zoomctl"><button onclick="zoom('lab',-1)">−</button><span id="zoomLab">100%</span><button onclick="zoom('lab',1)">+</button></div>
+      <div style="display:flex;gap:10px"><button class="btn btn-ghost btn-sm" onclick="window.print()">Print</button><button class="btn btn-primary btn-sm" onclick="closeDoc('lab')">Close</button></div>
+    </div>
+  </div>
+</div>
+
+<footer class="site-foot">LifeX Healthcare — UI prototype, demo data only.</footer>
+
+<script>
+const roleMeta = {
+  doctor:   {title:'Doctor Dashboard', acct:'Demo Doctor Account', badge:'DOCTOR'},
+  lab:      {title:'Laboratory Dashboard', acct:'Demo Laboratory Account', badge:'LABORATORY'},
+  pharmacy: {title:'Pharmacy Dashboard', acct:'Demo Pharmacy Account', badge:'PHARMACY'}
+};
+function showView(id){document.querySelectorAll('.view').forEach(v=>v.classList.add('hidden'));document.getElementById(id).classList.remove('hidden');window.scrollTo(0,0);}
+function showRoleSelect(){showView('view-roles');}
+function enterDashboard(role){
+  document.body.dataset.role = role;
+  const m = roleMeta[role];
+  document.getElementById('dashTitle').textContent = m.title;
+  document.getElementById('dashAcct').textContent = m.acct;
+  document.getElementById('roleBadge').textContent = m.badge;
+  document.getElementById('patientResult').classList.add('hidden');
+  document.getElementById('emptyState').classList.remove('hidden');
+  document.getElementById('searchErr').classList.add('hidden');
+  showView('view-dash');
+}
+function logout(){showRoleSelect();}
+function searchPatient(){
+  const id = document.getElementById('searchInput').value.trim().toUpperCase();
+  const err = document.getElementById('searchErr');
+  const result = document.getElementById('patientResult');
+  const empty = document.getElementById('emptyState');
+  if(id === 'XPA13S42JE2'){
+    result.classList.remove('hidden'); empty.classList.add('hidden'); err.classList.add('hidden');
+  }else{
+    result.classList.add('hidden'); empty.classList.add('hidden'); err.classList.remove('hidden');
+  }
+}
+function openDoc(which){document.getElementById(which==='rx'?'modalRx':'modalLab').classList.remove('hidden');}
+function closeDoc(which){document.getElementById(which==='rx'?'modalRx':'modalLab').classList.add('hidden');}
+function zoom(which, dir){
+  const body = document.getElementById(which==='rx'?'bodyRx':'bodyLab');
+  const label = document.getElementById(which==='rx'?'zoomRx':'zoomLab');
+  let z = parseFloat(body.style.getPropertyValue('--zoom')) || 1;
+  z = Math.min(1.4, Math.max(0.8, z + dir*0.1));
+  body.style.setProperty('--zoom', z);
+  label.textContent = Math.round(z*100)+'%';
+}
+</script>
+</body>
+</html>
